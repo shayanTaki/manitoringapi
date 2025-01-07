@@ -53,3 +53,22 @@ def calculate_directory_hash(directory):
             hasher.update(item.encode('utf-8'))
 
         return hasher.hexdigest()
+
+
+
+def send_hash_to_api(directory, api_url):
+    """ارسال هش دایرکتوری به API مشخص شده."""
+    global previous_hash
+    current_hash = calculate_directory_hash(directory)
+
+    if current_hash != previous_hash:
+        try:
+            payload = {'directory_hash': current_hash, 'directory_path': directory}
+            response = requests.post(api_url, json=payload)
+            response.raise_for_status()  # ایجاد خطا برای کدهای وضعیت ناموفق (4xx یا 5xx)
+            print(f"هش دایرکتوری {directory} با موفقیت ارسال شد. کد وضعیت: {response.status_code}")
+            previous_hash = current_hash
+        except requests.exceptions.RequestException as e:
+            print(f"خطا در ارسال هش به API: {e}")
+    else:
+        print(f"هش دایرکتوری {directory} تغییری نکرده است.")
