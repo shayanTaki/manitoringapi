@@ -72,3 +72,23 @@ def send_hash_to_api(directory, api_url):
             print(f"خطا در ارسال هش به API: {e}")
     else:
         print(f"هش دایرکتوری {directory} تغییری نکرده است.")
+
+def monitoring_loop():
+    """حلقه اصلی برای اجرای دوره ای محاسبه و ارسال هش."""
+    while monitoring_enabled:
+        current_directory = os.getcwd()
+        send_hash_to_api(current_directory, API_ENDPOINT)
+        time.sleep(3600)  # صبر به مدت 1 ساعت (3600 ثانیه)
+
+class StartMonitoring(Resource):
+    def post(self):
+        global monitoring_enabled
+        if not monitoring_enabled:
+            monitoring_enabled = True
+            # اجرای حلقه نظارت در یک thread جداگانه برای جلوگیری از مسدود شدن API
+            thread = threading.Thread(target=monitoring_loop)
+            thread.daemon = True  # اگر برنامه اصلی بسته شود، thread نیز بسته می شود
+            thread.start()
+            return jsonify({'message': 'نظارت بر دایرکتوری آغاز شد.'})
+        else:
+            return jsonify({'message': 'نظارت از قبل فعال است.'})
