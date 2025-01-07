@@ -103,3 +103,11 @@ class StopMonitoring(Resource):
             return jsonify({'message': 'نظارت بر دایرکتوری متوقف شد.'})
         else:
             return jsonify({'message': 'نظارت فعال نیست.'})
+
+
+
+api.add_resource(StartMonitoring, '/start_monitor')
+api.add_resource(StopMonitoring, '/stop_monitor')
+
+if __name__ == '__main__':
+    app.run(debug=True)
