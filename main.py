@@ -47,3 +47,9 @@ def calculate_directory_hash(directory):
                 all_items.append(f"FILE:{full_filename}:{os.path.getsize(full_filename)}:{os.path.getmtime(full_filename)}")
             except Exception as e:
                 print(f"خطا در خواندن فایل {full_filename}: {e}")
+
+            # هش کردن لیست مرتب شده از نام فایل ها و پوشه ها
+        for item in sorted(all_items):
+            hasher.update(item.encode('utf-8'))
+
+        return hasher.hexdigest()
