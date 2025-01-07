@@ -92,3 +92,14 @@ class StartMonitoring(Resource):
             return jsonify({'message': 'نظارت بر دایرکتوری آغاز شد.'})
         else:
             return jsonify({'message': 'نظارت از قبل فعال است.'})
+
+
+
+class StopMonitoring(Resource):
+    def post(self):
+        global monitoring_enabled
+        if monitoring_enabled:
+            monitoring_enabled = False
+            return jsonify({'message': 'نظارت بر دایرکتوری متوقف شد.'})
+        else:
+            return jsonify({'message': 'نظارت فعال نیست.'})
