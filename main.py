@@ -11,7 +11,7 @@ app = Flask(__name__)
 api = Api(app)
 
 # تنظیم آدرس API که هش ها به آن ارسال می شوند
-API_ENDPOINT = "YOUR_API_ENDPOINT_HERE"  # جایگزین کنید
+API_ENDPOINT = "http://127.0.0.1:5001/receive_hash/"  # جایگزین کنید
 
 
 
@@ -63,7 +63,8 @@ def send_hash_to_api(directory, api_url):
 
     if current_hash != previous_hash:
         try:
-            payload = {'directory_hash': current_hash, 'directory_path': directory}
+            # کلیدها با API دریافت‌کننده هماهنگ شدند
+            payload = {'hash_value': current_hash, 'directory_path': directory}
             response = requests.post(api_url, json=payload)
             response.raise_for_status()  # ایجاد خطا برای کدهای وضعیت ناموفق (4xx یا 5xx)
             print(f"هش دایرکتوری {directory} با موفقیت ارسال شد. کد وضعیت: {response.status_code}")
@@ -78,7 +79,7 @@ def monitoring_loop():
     while monitoring_enabled:
         current_directory = os.getcwd()
         send_hash_to_api(current_directory, API_ENDPOINT)
-        time.sleep(3600)  # صبر به مدت 1 ساعت (3600 ثانیه)
+        time.sleep(10)  # صبر به مدت 1 ساعت (3600 ثانیه)
 
 class StartMonitoring(Resource):
     def post(self):
